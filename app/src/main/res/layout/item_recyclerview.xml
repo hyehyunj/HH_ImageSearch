@@ -16,7 +16,6 @@
         android:background="@drawable/bg_round_square"
         android:clipToOutline="true"
         android:scaleType="centerCrop"
-        android:src="@drawable/bg_round_square"
         app:layout_constraintBottom_toTopOf="@+id/tv_item_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
