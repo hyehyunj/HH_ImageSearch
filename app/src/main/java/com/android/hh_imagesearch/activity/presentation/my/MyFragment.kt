@@ -6,10 +6,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import com.android.hh_imagesearch.activity.presentation.home.HomeRecyclerViewAdapter
 import com.android.hh_imagesearch.activity.data.model.Documents
 import com.android.hh_imagesearch.activity.presentation.main.MainViewModel
-import com.android.hh_imagesearch.databinding.FragmentMyStorageBinding
+import com.android.hh_imagesearch.databinding.FragmentMyBinding
 
 //private const val ARG_PARAM1 = "param1"
 
@@ -20,10 +21,10 @@ companion object {
     private const val TAG = "ImageSearchFragment"
 }
 
-    private var _binding : FragmentMyStorageBinding? = null
-    private val binding get() = _binding as FragmentMyStorageBinding
+    private var _binding : FragmentMyBinding? = null
+    private val binding get() = _binding as FragmentMyBinding
     private val sharedViewModel : MainViewModel by activityViewModels()
-    private lateinit var adapter : HomeRecyclerViewAdapter
+    private lateinit var adapter : MyRecyclerViewAdapter
     private var imageItem = mutableListOf<Documents>()
 
 
@@ -38,9 +39,20 @@ companion object {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentMyStorageBinding.inflate(inflater, container, false)
+        _binding = FragmentMyBinding.inflate(inflater, container, false)
         return binding.root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun getAdapter() {
+        binding.myRecyclerView.adapter = adapter
+        binding.myRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+//            addItemDecoration(DividerItemDecoration(context, GridLayoutManager.VERTICAL))
+    }
+
 
 //    companion object {
 //

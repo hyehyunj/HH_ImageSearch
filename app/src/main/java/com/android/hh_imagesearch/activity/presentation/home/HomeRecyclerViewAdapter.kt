@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.android.hh_imagesearch.activity.data.model.Documents
-import com.android.hh_imagesearch.databinding.ItemRecyclerviewBinding
+import com.android.hh_imagesearch.databinding.RecyclerviewHomeHolderBinding
 import com.bumptech.glide.Glide
 
 
@@ -22,7 +22,7 @@ class HomeRecyclerViewAdapter(
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
             val binding =
-                ItemRecyclerviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                RecyclerviewHomeHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             return Holder(binding)
         }
 
@@ -34,7 +34,7 @@ class HomeRecyclerViewAdapter(
             return item.size
         }
 
-        inner class Holder(private val binding: ItemRecyclerviewBinding) :
+        inner class Holder(private val binding: RecyclerviewHomeHolderBinding) :
             RecyclerView.ViewHolder(binding.root) {
 
 
@@ -42,16 +42,16 @@ class HomeRecyclerViewAdapter(
             fun bind(item: Documents) {
                 binding.apply {
 
-                    tvItemTitle.text = item.display_sitename
+                    homeHolderTvTitle.text = item.display_sitename
 //                    tvItemLocation.text = formatter.format(item.datetime)
-                    itemRecyclerview.setOnClickListener {
+                    homeHolder.setOnClickListener {
                         Log.d(TAG, "어댑터 클릭감지")
                         itemClickListener(item, adapterPosition)
                     }
                 }
                Glide.with(itemView.context)
                    .load(item.thumbnail_url)
-                   .into(binding.ivItemTitle)
+                   .into(binding.homeHolderIvTitle)
 
             }
         }

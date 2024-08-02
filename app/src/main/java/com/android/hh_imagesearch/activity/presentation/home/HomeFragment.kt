@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.android.hh_imagesearch.activity.data.model.Documents
 import com.android.hh_imagesearch.activity.presentation.main.MainViewModel
 import com.android.hh_imagesearch.activity.network.NetWorkClient.apiService
-import com.android.hh_imagesearch.databinding.FragmentImageSearchBinding
+import com.android.hh_imagesearch.databinding.FragmentHomeBinding
 import kotlinx.coroutines.launch
 
 
@@ -28,8 +28,8 @@ class HomeFragment : Fragment() {
         private const val TAG = "ImageSearchFragment"
     }
 
-    private var _binding : FragmentImageSearchBinding? = null
-    private val binding get() = _binding as FragmentImageSearchBinding
+    private var _binding : FragmentHomeBinding? = null
+    private val binding get() = _binding as FragmentHomeBinding
     private val sharedViewModel : MainViewModel by activityViewModels()
 //    private var dataListener : FragmentDataListener? = null
     private lateinit var adapter : HomeRecyclerViewAdapter
@@ -59,7 +59,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentImageSearchBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -106,8 +106,8 @@ class HomeFragment : Fragment() {
 
 
     private fun getAdapter() {
-        binding.fragImageSearchRecyclerView.adapter = adapter
-        binding.fragImageSearchRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+        binding.homeRecyclerView.adapter = adapter
+        binding.homeRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 //            addItemDecoration(DividerItemDecoration(context, GridLayoutManager.VERTICAL))
     }
 

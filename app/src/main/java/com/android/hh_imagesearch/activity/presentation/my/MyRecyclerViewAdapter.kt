@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.android.hh_imagesearch.activity.data.model.Documents
-import com.android.hh_imagesearch.databinding.ItemRecyclerviewBinding
+import com.android.hh_imagesearch.databinding.RecyclerviewMyHolderBinding
 import com.bumptech.glide.Glide
 
 
@@ -17,12 +17,12 @@ class MyRecyclerViewAdapter(
     ) : RecyclerView.Adapter<MyRecyclerViewAdapter.Holder>()
     {
         companion object {
-            private const val TAG = "RecyclerViewAdapter"
+            private const val TAG = "MyRecyclerViewAdapter"
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
             val binding =
-                ItemRecyclerviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                RecyclerviewMyHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             return Holder(binding)
         }
 
@@ -34,7 +34,7 @@ class MyRecyclerViewAdapter(
             return item.size
         }
 
-        inner class Holder(private val binding: ItemRecyclerviewBinding) :
+        inner class Holder(private val binding: RecyclerviewMyHolderBinding) :
             RecyclerView.ViewHolder(binding.root) {
 
 
@@ -42,16 +42,16 @@ class MyRecyclerViewAdapter(
             fun bind(item: Documents) {
                 binding.apply {
 
-                    tvItemTitle.text = item.display_sitename
+                    myHolderTvTitle.text = item.display_sitename
 //                    tvItemLocation.text = formatter.format(item.datetime)
-                    itemRecyclerview.setOnClickListener {
+                    myHolder.setOnClickListener {
                         Log.d(TAG, "어댑터 클릭감지")
                         itemClickListener(item, adapterPosition)
                     }
                 }
                Glide.with(itemView.context)
                    .load(item.thumbnail_url)
-                   .into(binding.ivItemTitle)
+                   .into(binding.myHolderIvTitle)
 
             }
         }

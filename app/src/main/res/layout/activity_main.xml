@@ -8,7 +8,7 @@
     tools:context=".activity.presentation.main.MainActivity">
 
     <include android:id="@+id/main_toolbar"
-        layout="@layout/toolbar" />
+        layout="@layout/toolbar_home" />
 
 
 
