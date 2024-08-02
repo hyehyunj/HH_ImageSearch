@@ -1,5 +1,6 @@
-package com.android.hh_imagesearch.activity.remote
+package com.android.hh_imagesearch.activity.network
 
+import com.android.hh_imagesearch.activity.data.remote.NetWorkInterface
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

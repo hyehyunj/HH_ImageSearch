@@ -1,4 +1,4 @@
-package com.android.hh_imagesearch.activity.fragment
+package com.android.hh_imagesearch.activity.presentation.home
 
 import android.os.Bundle
 import android.util.Log
@@ -6,39 +6,53 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.android.hh_imagesearch.activity.adapter.RecyclerViewAdapter
-import com.android.hh_imagesearch.activity.data.Documents
-import com.android.hh_imagesearch.activity.remote.NetWorkClient.apiService
+import com.android.hh_imagesearch.activity.data.model.Documents
+import com.android.hh_imagesearch.activity.presentation.main.MainViewModel
+import com.android.hh_imagesearch.activity.network.NetWorkClient.apiService
 import com.android.hh_imagesearch.databinding.FragmentImageSearchBinding
 import kotlinx.coroutines.launch
 
 
 //private const val ARG_PARAM1 = "param1"
 //private const val ARG_PARAM2 = "param2"
+//interface FragmentDataListener {
+//    fun onDataReceived(data: Documents)
+//}
 
-class ImageSearchFragment : Fragment() {
+class HomeFragment : Fragment() {
 
     companion object {
         private const val TAG = "ImageSearchFragment"
     }
-    private var _binding: FragmentImageSearchBinding? = null
-    private val binding get() = _binding as FragmentImageSearchBinding
 
-    private lateinit var adapter: RecyclerViewAdapter
+    private var _binding : FragmentImageSearchBinding? = null
+    private val binding get() = _binding as FragmentImageSearchBinding
+    private val sharedViewModel : MainViewModel by activityViewModels()
+//    private var dataListener : FragmentDataListener? = null
+    private lateinit var adapter : HomeRecyclerViewAdapter
     private var imageItem = mutableListOf<Documents>()
+
+//    override fun onAttach(context: Context) {
+//        super.onAttach(context)
+//
+//        if(context is FragmentDataListener) {
+//            dataListener = context
+//        } else throw RuntimeException("context must implement FragmentDataListener")
+//    }
+
 
 //    private var param1: String? = null
 //    private var param2: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
+//        arguments?.let {
 //            param1 = it.getString(ARG_PARAM1)
 //            param2 = it.getString(ARG_PARAM2)
-        }
+//        }
     }
 
     override fun onCreateView(
@@ -54,16 +68,25 @@ class ImageSearchFragment : Fragment() {
 
         communicateNetWork("아이브")
 
+
     }
 
 
     private fun communicateNetWork(query: String) = lifecycleScope.launch() {
         val responseData = apiService.getImage(query)
         imageItem = responseData.documents
-        Log.d(TAG, "d 여기선 되는데... ${imageItem.size}")
 
 
-        adapter = RecyclerViewAdapter(imageItem)
+
+        adapter = HomeRecyclerViewAdapter(imageItem, itemClickListener = { item, position ->
+            Log.d(TAG, "클릭감지")
+            addImage(item)
+
+//            dataListener?.onDataReceived(item)
+        })
+
+
+
         getAdapter()
     }
 
@@ -87,6 +110,10 @@ class ImageSearchFragment : Fragment() {
         binding.fragImageSearchRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
 //            addItemDecoration(DividerItemDecoration(context, GridLayoutManager.VERTICAL))
     }
+
+fun addImage(selectedImage : Documents) {
+    sharedViewModel.setImage(selectedImage)
+}
 
 
     override fun onResume() {

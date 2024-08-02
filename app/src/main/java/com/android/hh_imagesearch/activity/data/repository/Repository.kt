@@ -1,4 +1,4 @@
-package com.android.hh_imagesearch.activity.repository
+package com.android.hh_imagesearch.activity.data.repository
 
 
 

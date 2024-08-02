@@ -15,7 +15,7 @@
         android:theme="@style/Theme.HH_ImageSearch"
         tools:targetApi="31">
         <activity
-            android:name=".activity.activity.MainActivity"
+            android:name=".activity.presentation.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

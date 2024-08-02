@@ -1,6 +1,4 @@
-package com.android.hh_imagesearch.activity.data
-
-
+package com.android.hh_imagesearch.activity.data.model
 
 
 data class ImageModel(
@@ -13,6 +11,7 @@ data class Meta(
     val pageable_count: Int,
     val is_end: Boolean
 )
+
 
 data class Documents(
     val collection: String,

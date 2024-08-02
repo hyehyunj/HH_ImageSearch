@@ -1,7 +1,6 @@
-package com.android.hh_imagesearch.activity.activity
+package com.android.hh_imagesearch.activity.presentation.util
 
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -12,7 +11,7 @@ class Util {
         private var util: Util? = null
 
         @Synchronized
-        fun getInstance() : Util{
+        fun getInstance() : Util {
             if(util == null) {
                 util = Util()
             }
