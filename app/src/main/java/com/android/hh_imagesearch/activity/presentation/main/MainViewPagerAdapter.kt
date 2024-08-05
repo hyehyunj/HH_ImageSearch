@@ -7,7 +7,7 @@ import com.android.hh_imagesearch.activity.presentation.home.HomeFragment
 import com.android.hh_imagesearch.activity.presentation.my.MyFragment
 
 class MainViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
-    private lateinit var mainViewPagerAdapter: MainViewPagerAdapter
+//    private lateinit var mainViewPagerAdapter: MainViewPagerAdapter
     private val fragments = listOf(HomeFragment(), MyFragment())
 
     override fun getItemCount(): Int {

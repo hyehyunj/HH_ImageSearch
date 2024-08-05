@@ -55,4 +55,12 @@ class MyRecyclerViewAdapter(
 
             }
         }
+
+        fun updateList(items: List<Documents>) {
+            item.clear()
+            item.addAll(items)
+            notifyDataSetChanged()
+        }
+
+
     }

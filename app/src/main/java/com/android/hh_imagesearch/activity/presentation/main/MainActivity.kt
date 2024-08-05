@@ -1,15 +1,21 @@
 package com.android.hh_imagesearch.activity.presentation.main
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.android.hh_imagesearch.activity.data.model.Documents
+import com.android.hh_imagesearch.activity.presentation.my.MyFragment
 import com.android.hh_imagesearch.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
 
-class MainActivity : AppCompatActivity(){
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-private var addData = mutableListOf<Documents>()
+    private var addData = mutableListOf<Documents>()
+lateinit var mainViewModel: MainViewModel
+
     companion object {
         private const val TAG = "MainActivity"
     }
@@ -22,12 +28,6 @@ private var addData = mutableListOf<Documents>()
 
         //레이아웃 연결
         initLayout()
-
-
-
-
-
-
     }
 
     //레이아웃 초기화 함수 : 뷰페이저, 탭레이아웃 연결
@@ -36,15 +36,16 @@ private var addData = mutableListOf<Documents>()
         val mainViewPagerAdapter = MainViewPagerAdapter(this)
         viewPager.adapter = mainViewPagerAdapter
 
+
         TabLayoutMediator(binding.mainTab, binding.mainViewPager) { tab, position ->
             when (position) {
                 0 -> tab.text = "이미지"
-                1 -> {tab.text = "보관함"
+                1 -> {
+                    tab.text = "보관함"
                 }
             }
         }.attach()
-            }
-
+    }
 
 
     //인터페이스 : 검색결과 페이지에서 데이터 받기

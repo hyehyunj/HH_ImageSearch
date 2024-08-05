@@ -8,7 +8,7 @@ import retrofit2.http.Query
 interface NetWorkInterface {
     @Headers("Authorization: KakaoAK 8db9d5916e062bc33491d4ee1708b47d")
     @GET("v2/search/image")
-    suspend fun getImage(
+    suspend fun searchImage(
         @Query("query") query: String
     ): ImageModel
 }
