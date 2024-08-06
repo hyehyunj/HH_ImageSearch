@@ -4,14 +4,19 @@ import com.google.gson.annotations.SerializedName
 
 
 data class VideoModel(
-    val videoMeta: Meta,
+    @SerializedName("meta")
+    val videoMeta: VideoMeta,
+    @SerializedName("documents")
     val videoDocuments: MutableList<VideoDocuments>
 )
 
 data class VideoMeta(
-    val total_count: Int,
-    val pageable_count: Int,
-    val is_end: Boolean
+    @SerializedName("total_count")
+    val totalCount: Int,
+    @SerializedName("pageable_count")
+    val pageableCount: Int,
+    @SerializedName("is_end")
+    val isEnd: Boolean
 )
 
 data class VideoDocuments(
@@ -25,7 +30,7 @@ data class VideoDocuments(
     val thumbnail: String,
 //    val doc_url: String,
     @SerializedName("datetime")
-    val datetime: String
+    val dateTime: String
 )
 
 

@@ -72,7 +72,8 @@ class HomeFragment : Fragment() {
         sharedViewModel.searchWordLiveData.observe(viewLifecycleOwner) {
             searchWord = it
             if (searchWord != "") {receiveVideo(searchWord)
-            receiveImage(searchWord)}
+//            receiveImage(searchWord)
+                      }
         }
         //이미지 옵저버 : 이미지 보관함에서 제거시 반영
         sharedViewModel.imagesLiveData.observe(viewLifecycleOwner) {
@@ -84,7 +85,7 @@ class HomeFragment : Fragment() {
 
     //어댑터 초기화 함수 : 이미지 검색결과를 리사이클러뷰로 보여주는 함수
     private fun initAdapter() {
-        homeRecyclerViewAdapter = HomeRecyclerViewAdapter(imageSearchModel, itemClickListener = { item, position ->
+        homeRecyclerViewAdapter = HomeRecyclerViewAdapter(imageSearchModel, itemClickListener = { item ->
             sharedViewModel.addImage(item)
 
         })

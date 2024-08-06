@@ -13,7 +13,7 @@ class MyRecyclerViewAdapter(
 
 
     private val item: MutableList<SearchModel>,
-    private val itemClickListener: (item: SearchModel, position: Int) -> Unit
+    private val itemClickListener: (item: SearchModel) -> Unit
     ) : RecyclerView.Adapter<MyRecyclerViewAdapter.Holder>()
     {
         companion object {
@@ -23,7 +23,7 @@ class MyRecyclerViewAdapter(
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
             val binding =
                 RecyclerviewMyHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return Holder(binding)
+            return Holder(binding, itemClickListener)
         }
 
         override fun onBindViewHolder(holder: Holder, position: Int) {
@@ -34,7 +34,7 @@ class MyRecyclerViewAdapter(
             return item.size
         }
 
-        inner class Holder(private val binding: RecyclerviewMyHolderBinding) :
+        class Holder(private val binding: RecyclerviewMyHolderBinding, private val itemClickListener: (item: SearchModel) -> Unit) :
             RecyclerView.ViewHolder(binding.root) {
 
 
@@ -46,7 +46,7 @@ class MyRecyclerViewAdapter(
 //                    tvItemLocation.text = formatter.format(item.datetime)
                     myHolder.setOnClickListener {
                         Log.d(TAG, "어댑터 클릭감지")
-                        itemClickListener(item, adapterPosition)
+                        itemClickListener(item)
                     }
                 }
                Glide.with(itemView.context)

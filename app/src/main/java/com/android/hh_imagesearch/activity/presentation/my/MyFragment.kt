@@ -53,7 +53,7 @@ class MyFragment : Fragment() {
 
     //어댑터 초기화하는 함수
     private fun initAdapter() {
-        myRecyclerViewAdapter = MyRecyclerViewAdapter(imageItem, itemClickListener = { item, position ->
+        myRecyclerViewAdapter = MyRecyclerViewAdapter(imageItem, itemClickListener = { item ->
             removeImage(item)
         })
         binding.myRecyclerView.adapter = myRecyclerViewAdapter

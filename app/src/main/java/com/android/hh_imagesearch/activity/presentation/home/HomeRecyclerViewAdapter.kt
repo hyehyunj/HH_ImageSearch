@@ -3,6 +3,7 @@ package com.android.hh_imagesearch.activity.presentation.home
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.android.hh_imagesearch.activity.data.model.SearchModel
 import com.android.hh_imagesearch.databinding.RecyclerviewHomeHolderBinding
@@ -13,10 +14,21 @@ class HomeRecyclerViewAdapter(
 
 
     private val item: MutableList<SearchModel>,
-    private val itemClickListener: (item: SearchModel, position: Int) -> Unit
+    private val itemClickListener: (item: SearchModel) -> Unit
 ) : RecyclerView.Adapter<HomeRecyclerViewAdapter.Holder>() {
     companion object {
         private const val TAG = "HomeRecyclerViewAdapter"
+    }
+
+    private val differCallback = object : DiffUtil.ItemCallback<SearchModel>() {
+        override fun areItemsTheSame(oldItem: SearchModel, newItem: SearchModel): Boolean {
+           return oldItem.uId == newItem.uId
+        }
+
+        override fun areContentsTheSame(oldItem: SearchModel, newItem: SearchModel): Boolean {
+            return oldItem == newItem
+        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
@@ -26,7 +38,7 @@ class HomeRecyclerViewAdapter(
                 parent,
                 false
             )
-        return Holder(binding)
+        return Holder(binding, itemClickListener)
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
@@ -37,7 +49,7 @@ class HomeRecyclerViewAdapter(
         return item.size
     }
 
-    inner class Holder(private val binding: RecyclerviewHomeHolderBinding) :
+    class Holder(private val binding: RecyclerviewHomeHolderBinding, private val itemClickListener: (SearchModel) -> Unit) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: SearchModel) {
@@ -45,7 +57,7 @@ class HomeRecyclerViewAdapter(
 //                homeHolderTvTitle.text = item.siteName
 //                    tvItemLocation.text = formatter.format(item.datetime)
                 homeHolder.setOnClickListener {
-                    itemClickListener(item, adapterPosition)
+                    itemClickListener(item)
                     binding.homeHolderIvSelected.isVisible = true
                 }
             }
