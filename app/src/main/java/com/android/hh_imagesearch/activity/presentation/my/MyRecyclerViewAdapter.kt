@@ -4,7 +4,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.android.hh_imagesearch.activity.data.model.Documents
+import com.android.hh_imagesearch.activity.data.model.SearchModel
 import com.android.hh_imagesearch.databinding.RecyclerviewMyHolderBinding
 import com.bumptech.glide.Glide
 
@@ -12,8 +12,8 @@ import com.bumptech.glide.Glide
 class MyRecyclerViewAdapter(
 
 
-    private val item: MutableList<Documents>,
-    private val itemClickListener: (item: Documents, position: Int) -> Unit
+    private val item: MutableList<SearchModel>,
+    private val itemClickListener: (item: SearchModel, position: Int) -> Unit
     ) : RecyclerView.Adapter<MyRecyclerViewAdapter.Holder>()
     {
         companion object {
@@ -39,10 +39,10 @@ class MyRecyclerViewAdapter(
 
 
 
-            fun bind(item: Documents) {
+            fun bind(item: SearchModel) {
                 binding.apply {
 
-                    myHolderTvTitle.text = item.display_sitename
+//                    myHolderTvTitle.text = item.sitename
 //                    tvItemLocation.text = formatter.format(item.datetime)
                     myHolder.setOnClickListener {
                         Log.d(TAG, "어댑터 클릭감지")
@@ -50,13 +50,13 @@ class MyRecyclerViewAdapter(
                     }
                 }
                Glide.with(itemView.context)
-                   .load(item.thumbnail_url)
+                   .load(item.thumbnail)
                    .into(binding.myHolderIvTitle)
 
             }
         }
 
-        fun updateList(items: List<Documents>) {
+        fun updateList(items: List<SearchModel>) {
             item.clear()
             item.addAll(items)
             notifyDataSetChanged()

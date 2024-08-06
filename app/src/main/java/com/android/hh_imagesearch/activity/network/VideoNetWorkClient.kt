@@ -1,15 +1,16 @@
 package com.android.hh_imagesearch.activity.network
 
 import com.android.hh_imagesearch.activity.data.remote.NetWorkInterface
+import com.android.hh_imagesearch.activity.data.remote.VideoNetWorkInterface
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object NetWorkClient {
-    private const val IMAGE_BASE_URL = "https://dapi.kakao.com"
+object VideoNetWorkClient {
+    private const val VIDEO_BASE_URL = "https://dapi.kakao.com"
 
-    val apiService: NetWorkInterface
-        get() = instance.create(NetWorkInterface::class.java)//인스턴스화
+    val videoApiService: VideoNetWorkInterface
+        get() = instance.create(VideoNetWorkInterface::class.java)//인스턴스화
 
     // Retrofit 인스턴스를 초기화하고 반환
     private val instance: Retrofit
@@ -19,7 +20,7 @@ object NetWorkClient {
 
             // Retrofit 빌더를 사용하여 Retrofit 인스턴스 생성
             return Retrofit.Builder()
-                .baseUrl(IMAGE_BASE_URL)  // 기본 URL 설정
+                .baseUrl(VIDEO_BASE_URL)  // 기본 URL 설정
                 .addConverterFactory(GsonConverterFactory.create(gson))  // JSON 파싱을 위한 컨버터 추가
                 .build()
         }

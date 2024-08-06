@@ -1,21 +1,19 @@
 package com.android.hh_imagesearch.activity.presentation.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.android.hh_imagesearch.activity.data.model.Documents
-import com.android.hh_imagesearch.activity.presentation.my.MyFragment
+import com.android.hh_imagesearch.activity.data.model.SearchModel
 import com.android.hh_imagesearch.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private var addData = mutableListOf<Documents>()
-lateinit var mainViewModel: MainViewModel
-
+    private var addData = mutableListOf<SearchModel>()
+    private lateinit var mainViewModel : MainViewModel
     companion object {
         private const val TAG = "MainActivity"
     }
@@ -26,8 +24,26 @@ lateinit var mainViewModel: MainViewModel
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //레이아웃 연결
+        //뷰모델 초기화
+        mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
+        //레이아웃 초기화
         initLayout()
+
+        //최근검색어 백업
+        loadSearchWord()
+        mainViewModel.backUpImage(loadMyImage())
+
+        //최근검색어 저장
+        mainViewModel.searchWordLiveData.observe(this) {
+            saveSearchWord(it.toString())
+        }
+
+        mainViewModel.imagesLiveData.observe(this) {
+           saveMyImage(it)
+        }
+
+
     }
 
     //레이아웃 초기화 함수 : 뷰페이저, 탭레이아웃 연결
@@ -35,7 +51,6 @@ lateinit var mainViewModel: MainViewModel
         val viewPager = binding.mainViewPager
         val mainViewPagerAdapter = MainViewPagerAdapter(this)
         viewPager.adapter = mainViewPagerAdapter
-
 
         TabLayoutMediator(binding.mainTab, binding.mainViewPager) { tab, position ->
             when (position) {
@@ -47,18 +62,43 @@ lateinit var mainViewModel: MainViewModel
         }.attach()
     }
 
+    private fun saveSearchWord(searchWord: String) {
+        val pref = getSharedPreferences("pref", 0)
+        val edit = pref.edit()
+        edit.putString("search_word", searchWord)
+        edit.apply()
+    }
 
-    //인터페이스 : 검색결과 페이지에서 데이터 받기
-//override fun onDataReceived(data: Documents) {
-//    addData += data
-//
-//    Log.d(TAG, "$addData")
-//}
+    private fun loadSearchWord() {
+        val pref = getSharedPreferences("pref", 0)
+        mainViewModel.updateSearchWord(pref.getString("search_word", "") ?: "")
+    }
 
-    //검색결과 보관함에 전달
-//private fun addStorage() {
-////val fragment = MyStorageFragment.newInstance(addData)
-//}
+
+
+
+
+
+    private fun saveMyImage(image: List<SearchModel>) {
+        val pref = getSharedPreferences("pref", 0)
+        val edit = pref.edit()
+        val jsonString = Gson().toJson(image)
+        edit.putString("search_image", jsonString)
+        edit.apply()
+    }
+
+    private fun loadMyImage() : MutableList<SearchModel> {
+        val pref = getSharedPreferences("pref", 0)
+        val jsonString = pref.getString("search_image", "")
+        return if (jsonString != "") {
+            val type = object : TypeToken<MutableList<SearchModel>>() {}.type
+            Gson().fromJson(jsonString, type)
+        } else {
+            mutableListOf()
+        }
+    }
+
+
 
 
 }
