@@ -42,7 +42,7 @@ class HomeRecyclerViewAdapter(
 
         fun bind(item: SearchModel) {
             binding.apply {
-                homeHolderTvTitle.text = item.siteName
+//                homeHolderTvTitle.text = item.siteName
 //                    tvItemLocation.text = formatter.format(item.datetime)
                 homeHolder.setOnClickListener {
                     itemClickListener(item, adapterPosition)

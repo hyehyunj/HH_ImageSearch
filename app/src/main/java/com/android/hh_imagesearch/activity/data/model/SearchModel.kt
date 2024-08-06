@@ -12,7 +12,7 @@ data class SearchModel(
 )
 
 //이미지 결과를 SearchModel타입으로 변환시켜주는 함수
-fun imageToSearchResult(content: MutableList<Documents>): List<SearchModel> = with(content) {
+fun imageToSearchModel(content: MutableList<ImageDocuments>): List<SearchModel> = with(content) {
     return map { content ->
         SearchModel(
             thumbnail = content.thumbnail_url,
@@ -24,8 +24,8 @@ fun imageToSearchResult(content: MutableList<Documents>): List<SearchModel> = wi
 
 
 //동영상 결과를 변환시켜주는 함수
-//fun videoToSearchResult(content : MutableList<VideoDocuments>) : MutableList<SearchResult> = with(content) {
-//    return map {content ->
-//        SearchResult(thumbnail = content.thumbnail ?: "" )
-//    }
-//}
+fun videoToSearchModel(content : MutableList<VideoDocuments>) : List<SearchModel> = with(content) {
+    return map {content ->
+        SearchModel(thumbnail = content.thumbnail ?: "" )
+    }
+}

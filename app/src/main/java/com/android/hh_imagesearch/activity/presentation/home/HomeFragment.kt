@@ -13,8 +13,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.android.hh_imagesearch.activity.data.model.SearchModel
-import com.android.hh_imagesearch.activity.data.model.VideoDocuments
-import com.android.hh_imagesearch.activity.data.model.imageToSearchResult
+import com.android.hh_imagesearch.activity.data.model.imageToSearchModel
+import com.android.hh_imagesearch.activity.data.model.videoToSearchModel
 import com.android.hh_imagesearch.activity.presentation.main.MainViewModel
 import com.android.hh_imagesearch.activity.network.NetWorkClient.apiService
 import com.android.hh_imagesearch.databinding.FragmentHomeBinding
@@ -32,7 +32,7 @@ class HomeFragment : Fragment() {
     private val sharedViewModel: MainViewModel by activityViewModels()
     private lateinit var homeRecyclerViewAdapter: HomeRecyclerViewAdapter
     private var imageSearchModel = mutableListOf<SearchModel>()
-    private val videoSearchResult = mutableListOf<VideoDocuments>()
+    private var videoSearchModel = mutableListOf<SearchModel>()
     private var searchWord = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,7 +71,8 @@ class HomeFragment : Fragment() {
         //검색어 옵저버 : 검색어 변화를 감지해 검색결과 변경
         sharedViewModel.searchWordLiveData.observe(viewLifecycleOwner) {
             searchWord = it
-            if (searchWord != "") receiveImage(searchWord)
+            if (searchWord != "") {receiveVideo(searchWord)
+            receiveImage(searchWord)}
         }
         //이미지 옵저버 : 이미지 보관함에서 제거시 반영
         sharedViewModel.imagesLiveData.observe(viewLifecycleOwner) {
@@ -106,16 +107,21 @@ class HomeFragment : Fragment() {
     //Retrofit을 통해 검색어에 따른 이미지 검색결과 불러오는 함수
     private fun receiveImage(query: String) = lifecycleScope.launch() {
         val searchImage = apiService.searchImage(query)
-        imageSearchModel = imageToSearchResult(searchImage.documents).toMutableList()
+        imageSearchModel = imageToSearchModel(searchImage.imageDocuments).toMutableList()
         homeRecyclerViewAdapter.updateList(imageSearchModel)
     }
 
     //Retrofit을 통해 검색어에 따른 동영상 검색결과 불러오는 함수
-//    private fun receiveVideo(query: String) = lifecycleScope.launch() {
-//        val searchVideo = videoApiService.searchVideo(query)
-//        videoSearchResult.addAll(searchVideo.videoDocuments)
-//        adapter.updateList(videoSearchResult)
-//    }
+    private fun receiveVideo(query: String) = lifecycleScope.launch() {
+        val searchVideo = apiService.searchVideo(query)
+        videoSearchModel = videoToSearchModel(searchVideo.videoDocuments).toMutableList()
+        homeRecyclerViewAdapter.updateList(videoSearchModel)
+    }
+
+    private fun searchResults() {
+
+    }
+
 
     //키보드 숨기는 함수
     private fun hideKeyboard() {
