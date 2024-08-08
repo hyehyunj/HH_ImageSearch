@@ -17,6 +17,7 @@
         android:clipToOutline="true"
         android:padding="36dp"
         android:scaleType="centerCrop"
+        android:clickable="false"
         app:layout_constraintBottom_toTopOf="@+id/home_holder_tv_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

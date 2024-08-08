@@ -9,7 +9,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class MainActivity : AppCompatActivity(), SelectedInterface {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private var addData = mutableListOf<ContentModel>()
@@ -30,18 +30,18 @@ class MainActivity : AppCompatActivity(), SelectedInterface {
         //레이아웃 초기화
         initLayout()
 
-        //최근검색어 백업
+        //최근검색어, 마이컨텐츠 백업
         loadSearchWord()
-        mainViewModel.backUpContent(loadMyImage())
+        mainViewModel.backUpContent(loadMyContent())
 
         //최근검색어 저장
         mainViewModel.searchWordLiveData.observe(this) {
             saveSearchWord(it.toString())
         }
 
-        mainViewModel.selectedLiveData.observe(this) {
-            if(mainViewModel.selectedLiveData.value != null)
-            saveMyImage(it)
+        mainViewModel.myContentLiveData.observe(this) {
+            if(mainViewModel.myContentLiveData.value != null)
+            saveMyContent(it)
         }
 
 
@@ -55,9 +55,10 @@ class MainActivity : AppCompatActivity(), SelectedInterface {
 
         TabLayoutMediator(binding.mainTab, binding.mainViewPager) { tab, position ->
             when (position) {
-                0 -> tab.text = "이미지"
+                0 -> tab.text = "검색"
                 1 -> {
                     tab.text = "보관함"
+                    mainViewModel.backUpContent(loadMyContent())
                 }
             }
         }.attach()
@@ -80,15 +81,15 @@ class MainActivity : AppCompatActivity(), SelectedInterface {
 
 
 
-    private fun saveMyImage(image: List<ContentModel>) {
+    private fun saveMyContent(content: List<ContentModel>) {
         val pref = getSharedPreferences("pref", 0)
         val edit = pref.edit()
-        val jsonString = Gson().toJson(image)
+        val jsonString = Gson().toJson(content)
         edit.putString("search_image", jsonString)
         edit.apply()
     }
 
-    private fun loadMyImage() : MutableList<ContentModel> {
+    private fun loadMyContent() : MutableList<ContentModel> {
         val pref = getSharedPreferences("pref", 0)
         val jsonString = pref.getString("search_image", "")
         return if (jsonString != "") {
@@ -98,10 +99,4 @@ class MainActivity : AppCompatActivity(), SelectedInterface {
             mutableListOf()
         }
     }
-
-    override fun select(item: ContentModel) {
-        mainViewModel.addContent(item)
-    }
-
-
 }

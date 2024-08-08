@@ -6,13 +6,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.android.hh_imagesearch.activity.data.model.ContentModel
+import com.android.hh_imagesearch.activity.presentation.home.LOADING
 import com.android.hh_imagesearch.activity.presentation.util.Util
 import com.android.hh_imagesearch.databinding.RecyclerviewMyHolderBinding
 import com.bumptech.glide.Glide
 
 
 class MyRecyclerViewAdapter(
-    private val itemClickListener: (item: ContentModel) -> Unit
+    private val itemClickListener: (item: ContentModel) -> Unit,
+    private val itemLongClickListener: (item: ContentModel, position: Int) -> Unit
 ) : ListAdapter<ContentModel, MyRecyclerViewAdapter.Holder>(diffUtil) {
     companion object {
         val diffUtil = object : DiffUtil.ItemCallback<ContentModel>() {
@@ -29,9 +31,8 @@ class MyRecyclerViewAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding =
             RecyclerviewMyHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return Holder(binding, itemClickListener)
+        return Holder(binding, itemClickListener, itemLongClickListener)
     }
-
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         holder.bind(getItem(position))
@@ -39,7 +40,8 @@ class MyRecyclerViewAdapter(
 
     class Holder(
         private val binding: RecyclerviewMyHolderBinding,
-        private val itemClickListener: (item: ContentModel) -> Unit
+        private val itemClickListener: (item: ContentModel) -> Unit,
+        private val itemLongClickListener: (item: ContentModel, position: Int) -> Unit
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -52,6 +54,10 @@ class MyRecyclerViewAdapter(
                 myHolder.setOnClickListener {
                     itemClickListener(item)
                 }
+                myHolder.setOnLongClickListener {
+                    itemLongClickListener(item, adapterPosition)
+                    true
+                }
             }
             Glide.with(itemView.context)
                 .load(item.thumbnail)
@@ -59,6 +65,4 @@ class MyRecyclerViewAdapter(
 
         }
     }
-
-
 }

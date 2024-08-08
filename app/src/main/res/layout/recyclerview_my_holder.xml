@@ -30,7 +30,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:text="제목"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/my_holder_iv_title"
         app:layout_constraintStart_toStartOf="@+id/my_holder_iv_title"

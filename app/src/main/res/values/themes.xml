@@ -6,7 +6,8 @@
 <!--        <item name="colorPrimary">@color/primary</item>-->
 <!--        <item name="colorAccent">@color/green</item>-->
         <item name="android:colorBackground">@color/light_ash</item>
-
+        <item name="android:colorPrimary">@color/ash</item>
+        <item name="android:color">@color/ash</item>
 
     </style>
 

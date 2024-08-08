@@ -4,7 +4,7 @@ import java.util.UUID
 
 data class ContentModel(
     val uId: String = UUID.randomUUID().toString(),
-    val selectedContent: Boolean = false,
+    var selectedContent: Boolean = false,
     val contentsType: Int = 0,
     val thumbnail: String = "",
     val title: String = "",

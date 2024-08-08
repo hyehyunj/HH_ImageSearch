@@ -1,9 +1,9 @@
 package com.android.hh_imagesearch.activity.presentation.home
 
-import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import android.view.Gravity
+import android.os.Handler
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -17,18 +17,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.hh_imagesearch.R
+import com.android.hh_imagesearch.activity.data.model.ContentModel
 import com.android.hh_imagesearch.activity.data.model.imageToContentModel
 import com.android.hh_imagesearch.activity.data.model.videoToContentModel
 import com.android.hh_imagesearch.activity.presentation.main.MainViewModel
 import com.android.hh_imagesearch.activity.network.NetWorkClient.apiService
-import com.android.hh_imagesearch.activity.presentation.main.SelectedInterface
 import com.android.hh_imagesearch.databinding.FragmentHomeBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-
+//검색창에 입력한 검색어 결과(사진, 영상)를 리스트형태로 보여주는 프래그먼트
 class HomeFragment : Fragment() {
 
     companion object {
@@ -40,19 +39,6 @@ class HomeFragment : Fragment() {
     private val sharedViewModel: MainViewModel by activityViewModels()
     private lateinit var homeRecyclerViewAdapter: HomeRecyclerViewAdapter
     private lateinit var searchWord: String
-    private var selectedInter: SelectedInterface? = null
-
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        selectedInter = context as SelectedInterface
-    }
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,82 +57,71 @@ class HomeFragment : Fragment() {
         //최상단이동버튼
         fabListener()
 
-        //필터
-        binding.homeToolbar.homeToolbarRgSearchFilter.setOnCheckedChangeListener { rg, id ->
-            searchWord = binding.homeToolbar.homeToolbarEtSearch.text.toString()
-            if (searchWord.isBlank()) {
-                val toast = Toast.makeText(requireContext(), "검색어를 입력해주세요.", Toast.LENGTH_SHORT)
-                toast.setGravity(Gravity.CENTER, Gravity.CENTER_HORIZONTAL, Gravity.CENTER_VERTICAL)
-                toast.show()
-            } else when (id) {
-                R.id.home_toolbar_rb_all ->
-                    sharedViewModel.updateFilter("전체")
+        //스크롤 하단감지 (무한스크롤 시도)
+        scrollEndListener()
 
-                R.id.home_toolbar_rb_image -> {
-                    binding.homeToolbar.homeToolbarRbAll.isChecked = false
-                    sharedViewModel.updateFilter("사진")
-                }
-
-                R.id.home_toolbar_rb_video -> {
-                    binding.homeToolbar.homeToolbarRbAll.isChecked = false
-                    sharedViewModel.updateFilter("영상")
-                }
-            }
-        }
+        //검색필터
+        filterListener()
 
         //검색창에 최근 검색어 백업
         binding.homeToolbar.homeToolbarEtSearch.setText(sharedViewModel.searchWordLiveData.value)
 
-        //검색어 입력 1.키보드 엔터키
+        //검색어 입력 후
+        // 1.키보드 엔터키
         binding.homeToolbar.homeToolbarEtSearch.setOnKeyListener { _, keyCode, _ ->
             if (keyCode == KeyEvent.KEYCODE_ENTER) {
                 searchWithWord()
                 return@setOnKeyListener false
             } else return@setOnKeyListener false
         }
-        //검색어 입력 2.검색 아이콘 클릭
+        //2.돋보기 아이콘
         binding.homeToolbar.homeToolbarIvSearch.setOnClickListener {
             searchWithWord()
         }
 
-        //검색어 옵저버 : 검색어 변화를 감지해 검색결과 변경
+        //검색어 옵저버 : 검색어 변화를 감지해 검색
         sharedViewModel.searchWordLiveData.observe(viewLifecycleOwner) {
             searchWord = it
             if (searchWord != "") {
                 receiveAll(searchWord)
             }
         }
-        //저장된 컨텐츠 옵저버 : 보관함에서 제거시 반영
 
-
-        //필터 옵저버 : 검색 필터 클릭시 반영
+        //필터 옵저버 : 검색 필터 변화를 감지해 반영
         sharedViewModel.searchFilterLiveData.observe(viewLifecycleOwner) {
             when (sharedViewModel.searchFilterLiveData.value) {
                 "전체" -> receiveAll(searchWord)
                 "사진" -> receiveImage(searchWord)
                 "영상" -> receiveVideo(searchWord)
+            }
+        }
 
-            }
-            //모델 옵저버 : 검색결과 변경시 반영
-            sharedViewModel.searchLiveData.observe(viewLifecycleOwner) {
-                homeRecyclerViewAdapter.submitList(
-                    sharedViewModel.searchLiveData.value ?: mutableListOf()
-                )
-            }
+        //검색결과 옵저버 : 검색결과 변화를 감지해 반영
+        sharedViewModel.searchResultLiveData.observe(viewLifecycleOwner) {
+            sharedViewModel.findMyContent()
+            homeRecyclerViewAdapter.submitList(
+                sharedViewModel.searchResultLiveData.value?.sortedByDescending { it.dateTime }
+                    ?: mutableListOf()
+            )
+        }
 
-        sharedViewModel.selectedLiveData.observe(viewLifecycleOwner) {
-            homeRecyclerViewAdapter
-            }
+        //보관함 옵저버 : 저장된 컨텐츠 변화를 감지해 반영
+        sharedViewModel.myContentLiveData.observe(viewLifecycleOwner) {
+            sharedViewModel.findMyContent()
+            homeRecyclerViewAdapter.notifyDataSetChanged()
         }
     }
 
 
-    //어댑터 초기화 함수 : 이미지 검색결과를 리사이클러뷰로 보여주는 함수
+    //어댑터 초기화 함수 : 검색결과를 리사이클러뷰로 보여주는 함수. 컨텐츠 클릭시 보관함에 담긴다.
     private fun initAdapter() {
         homeRecyclerViewAdapter = HomeRecyclerViewAdapter(
             itemClickListener = { item ->
-                val selected = item.copy(selectedContent = true)
-                selectedInter?.select(selected)
+                if (!item.selectedContent) {
+                    item.selectedContent = true
+                    sharedViewModel.addContent(item)
+                } else Toast.makeText(requireContext(), "이미 보관함에 저장된 컨텐츠입니다.", Toast.LENGTH_SHORT)
+                    .show()
             })
         binding.homeRecyclerView.adapter = homeRecyclerViewAdapter
         binding.homeRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
@@ -154,7 +129,7 @@ class HomeFragment : Fragment() {
 
     //최상단이동버튼 함수
     private fun fabListener() {
-        binding.homeFab.setOnClickListener() {
+        binding.homeFab.setOnClickListener {
             binding.homeRecyclerView.smoothScrollToPosition(0)
         }
         val fadeIn = AlphaAnimation(0f, 1f).apply { duration = 500 }
@@ -178,62 +153,80 @@ class HomeFragment : Fragment() {
         })
     }
 
+    //스크롤 끝 도달여부 확인 함수
+    private fun scrollEndListener() {
+        var isLoading = false
+        binding.homeRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (!isLoading) {
+                    if (!binding.homeRecyclerView.canScrollVertically(1)) {
+                        isLoading = true
+                    }
+                }
+            }
+        })
+    }
 
-    //검색어 입력하는 함수
+    //검색필터 함수 : 전체, 사진, 영상 중 선택한 필터에 따라 검색결과를 보여준다. 디폴트는 전체
+    private fun filterListener() {
+        binding.homeToolbar.homeToolbarRgSearchFilter.setOnCheckedChangeListener { rg, id ->
+            searchWord = binding.homeToolbar.homeToolbarEtSearch.text.toString()
+            if (searchWord.isBlank() || binding.homeToolbar.homeToolbarEtSearch.text.isBlank()) {
+                Toast.makeText(requireContext(), "검색어를 입력해주세요.", Toast.LENGTH_SHORT).show()
+            } else when (id) {
+                R.id.home_toolbar_rb_all ->
+                    sharedViewModel.updateFilter("전체")
+
+                R.id.home_toolbar_rb_image -> {
+                    binding.homeToolbar.homeToolbarRbAll.isChecked = false
+                    sharedViewModel.updateFilter("사진")
+                }
+
+                R.id.home_toolbar_rb_video -> {
+                    binding.homeToolbar.homeToolbarRbAll.isChecked = false
+                    sharedViewModel.updateFilter("영상")
+                }
+            }
+        }
+    }
+
+    //검색창 함수 : 검색어를 입력받는다.
     private fun searchWithWord() {
         binding.homeToolbar.homeToolbarRbAll.isChecked = true
         binding.homeToolbar.homeToolbarRbImage.isChecked = false
         binding.homeToolbar.homeToolbarRbVideo.isChecked = false
         searchWord = binding.homeToolbar.homeToolbarEtSearch.text.toString()
         if (searchWord.isBlank()) {
-            val toast = Toast.makeText(requireContext(), "검색어를 입력해주세요.", Toast.LENGTH_SHORT)
-            toast.setGravity(Gravity.CENTER, Gravity.CENTER_HORIZONTAL, Gravity.CENTER_VERTICAL)
-            toast.show()
+            Toast.makeText(requireContext(), "검색어를 입력해주세요.", Toast.LENGTH_SHORT).show()
         } else {
             sharedViewModel.updateSearchWord(searchWord)
             hideKeyboard()
         }
     }
 
-
-    //Retrofit을 통해 검색어에 따른 전체 검색결과 불러오는 함수
+    //전체 검색결과 함수 : Retrofit을 통해 검색어에 따른 사진 및 영상 검색결과를 불러오는 함수
     private fun receiveAll(query: String) = lifecycleScope.launch() {
         val receiveImage = async(Dispatchers.IO) { apiService.searchImage(query) }
         val receiveVideo = async(Dispatchers.IO) { apiService.searchVideo(query) }
 
-        sharedViewModel.updateMixContentModel(
+        sharedViewModel.receivedMergedSearchResult(
             imageToContentModel(receiveImage.await().imageDocuments).toMutableList(),
             videoToContentModel(receiveVideo.await().videoDocuments).toMutableList()
         )
     }
 
-    //Retrofit을 통해 검색어에 따른 이미지 검색결과 불러오는 함수
+    //사진 검색결과 함수 : Retrofit을 통해 검색어에 따른 이미지 검색결과를 불러오는 함수
     private fun receiveImage(query: String) = lifecycleScope.launch() {
         val searchImage = apiService.searchImage(query)
-        sharedViewModel.updateContentModel(imageToContentModel(searchImage.imageDocuments).toMutableList())
-//
-//        binding.homeToolbar.homeToolbarFlowSearchFilter.isVisible = true
+        sharedViewModel.receivedSearchResult(imageToContentModel(searchImage.imageDocuments).toMutableList())
     }
 
-    //Retrofit을 통해 검색어에 따른 동영상 검색결과 불러오는 함수
+    //영상 검색결과 함수 : Retrofit을 통해 검색어에 따른 동영상 검색결과를 불러오는 함수
     private fun receiveVideo(query: String) = lifecycleScope.launch() {
         val searchVideo = apiService.searchVideo(query)
-        sharedViewModel.updateContentModel(videoToContentModel(searchVideo.videoDocuments).toMutableList())
-
-
+        sharedViewModel.receivedSearchResult(videoToContentModel(searchVideo.videoDocuments).toMutableList())
     }
-
-//    private val scrollListener by lazy {
-//    object  : RecyclerView.OnScrollListener() {
-//        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-//            super.onScrollStateChanged(recyclerView, newState)
-//            if (newState == RecyclerView.SCROLL_STATE_IDLE && !binding.homeRecyclerView.canScrollVertically(1))
-//            {
-//                if()
-//            }        }
-//    }
-//    }
-
 
     //키보드 숨기는 함수
     private fun hideKeyboard() {
@@ -241,17 +234,6 @@ class HomeFragment : Fragment() {
         manager.hideSoftInputFromWindow(binding.homeToolbar.homeToolbarEtSearch.windowToken, 0)
     }
 
-    //보관된 이미지 표시해주는 함수
-
-
-    override fun onResume() {
-        super.onResume()
-//        sharedViewModel.selectedLiveData.observe(viewLifecycleOwner) {
-//            homeRecyclerViewAdapter.submitList(
-//                sharedViewModel.selectedLiveData.value ?: mutableListOf()
-//            )
-//        }
-    }
 
 }
 
