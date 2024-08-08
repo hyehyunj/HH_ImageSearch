@@ -3,33 +3,33 @@ package com.android.hh_imagesearch.activity.presentation.home
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.android.hh_imagesearch.activity.data.model.SearchModel
+import com.android.hh_imagesearch.activity.data.model.ContentModel
+import com.android.hh_imagesearch.activity.presentation.util.Util
 import com.android.hh_imagesearch.databinding.RecyclerviewHomeHolderBinding
 import com.bumptech.glide.Glide
 
 
 class HomeRecyclerViewAdapter(
+   private val itemClickListener: (item: ContentModel) -> Unit
+) : ListAdapter<ContentModel, HomeRecyclerViewAdapter.Holder>(diffUtil) {
 
-
-    private val item: MutableList<SearchModel>,
-    private val itemClickListener: (item: SearchModel) -> Unit
-) : RecyclerView.Adapter<HomeRecyclerViewAdapter.Holder>() {
     companion object {
-        private const val TAG = "HomeRecyclerViewAdapter"
+        val diffUtil = object : DiffUtil.ItemCallback<ContentModel>() {
+            override fun areItemsTheSame(oldItem: ContentModel, newItem: ContentModel): Boolean {
+                return oldItem.uId == newItem.uId
+            }
+
+            override fun areContentsTheSame(oldItem: ContentModel, newItem: ContentModel): Boolean {
+                return oldItem == newItem
+            }
+        }
     }
 
-    private val differCallback = object : DiffUtil.ItemCallback<SearchModel>() {
-        override fun areItemsTheSame(oldItem: SearchModel, newItem: SearchModel): Boolean {
-           return oldItem.uId == newItem.uId
-        }
-
-        override fun areContentsTheSame(oldItem: SearchModel, newItem: SearchModel): Boolean {
-            return oldItem == newItem
-        }
-
-    }
+    val differ = AsyncListDiffer(this,diffUtil)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding =
@@ -42,45 +42,45 @@ class HomeRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        holder.bind(item[position])
+        holder.bind(getItem(position))
     }
 
-    override fun getItemCount(): Int {
-        return item.size
-    }
-
-    class Holder(private val binding: RecyclerviewHomeHolderBinding, private val itemClickListener: (SearchModel) -> Unit) :
+    class Holder(
+        private val binding: RecyclerviewHomeHolderBinding,
+        private val itemClickListener: (ContentModel) -> Unit
+    ) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: SearchModel) {
+
+        fun bind(item: ContentModel) {
             binding.apply {
-//                homeHolderTvTitle.text = item.siteName
-//                    tvItemLocation.text = formatter.format(item.datetime)
+                homeHolderTvTitle.text = item.title
+                homeHolderTvDateTime.text = Util.makeDateTimeFormat(item.dateTime)
+                binding.homeHolderIvSelected.isVisible = item.selectedContent
+
+                binding.homeHolderIvVideo.isVisible = item.type != "image"
                 homeHolder.setOnClickListener {
                     itemClickListener(item)
-                    binding.homeHolderIvSelected.isVisible = true
                 }
             }
             Glide.with(itemView.context)
                 .load(item.thumbnail)
                 .into(binding.homeHolderIvTitle)
         }
-
-//        fun remove(items: List<Documents>) {
-//            if(item.thu)binding.homeHolderIvSelected.isVisible = false
-//        }
     }
 
-//    fun updateList(items: List<Documents>) {
-//        item.clear()
-//        item.addAll(items)
-//        notifyDataSetChanged()
+
+
+//    fun updateMyContent(item: ContentModel) {
+//        if(item.selectedContent) binding.homeHolderIvSelected.isVisible = true
+//        else binding.homeHolderIvSelected.isVisible = false
 //    }
 
-    fun updateList(items: MutableList<SearchModel>) {
+
+    fun updateList(item: MutableList<ContentModel>) {
         item.clear()
-        item.addAll(items)
-        notifyDataSetChanged()
+        item.addAll(item)
+        submitList(item)
     }
 
 

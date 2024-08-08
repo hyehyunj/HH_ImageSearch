@@ -1,66 +1,64 @@
 package com.android.hh_imagesearch.activity.presentation.my
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.android.hh_imagesearch.activity.data.model.SearchModel
+import com.android.hh_imagesearch.activity.data.model.ContentModel
+import com.android.hh_imagesearch.activity.presentation.util.Util
 import com.android.hh_imagesearch.databinding.RecyclerviewMyHolderBinding
 import com.bumptech.glide.Glide
 
 
 class MyRecyclerViewAdapter(
+    private val itemClickListener: (item: ContentModel) -> Unit
+) : ListAdapter<ContentModel, MyRecyclerViewAdapter.Holder>(diffUtil) {
+    companion object {
+        val diffUtil = object : DiffUtil.ItemCallback<ContentModel>() {
+            override fun areItemsTheSame(oldItem: ContentModel, newItem: ContentModel): Boolean {
+                return oldItem.uId == newItem.uId
+            }
 
-
-    private val item: MutableList<SearchModel>,
-    private val itemClickListener: (item: SearchModel) -> Unit
-    ) : RecyclerView.Adapter<MyRecyclerViewAdapter.Holder>()
-    {
-        companion object {
-            private const val TAG = "MyRecyclerViewAdapter"
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-            val binding =
-                RecyclerviewMyHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return Holder(binding, itemClickListener)
-        }
-
-        override fun onBindViewHolder(holder: Holder, position: Int) {
-            holder.bind(item[position])
-        }
-
-        override fun getItemCount(): Int {
-            return item.size
-        }
-
-        class Holder(private val binding: RecyclerviewMyHolderBinding, private val itemClickListener: (item: SearchModel) -> Unit) :
-            RecyclerView.ViewHolder(binding.root) {
-
-
-
-            fun bind(item: SearchModel) {
-                binding.apply {
-
-//                    myHolderTvTitle.text = item.sitename
-//                    tvItemLocation.text = formatter.format(item.datetime)
-                    myHolder.setOnClickListener {
-                        Log.d(TAG, "어댑터 클릭감지")
-                        itemClickListener(item)
-                    }
-                }
-               Glide.with(itemView.context)
-                   .load(item.thumbnail)
-                   .into(binding.myHolderIvTitle)
-
+            override fun areContentsTheSame(oldItem: ContentModel, newItem: ContentModel): Boolean {
+                return oldItem == newItem
             }
         }
-
-        fun updateList(items: List<SearchModel>) {
-            item.clear()
-            item.addAll(items)
-            notifyDataSetChanged()
-        }
-
-
     }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
+        val binding =
+            RecyclerviewMyHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return Holder(binding, itemClickListener)
+    }
+
+
+    override fun onBindViewHolder(holder: Holder, position: Int) {
+        holder.bind(getItem(position))
+    }
+
+    class Holder(
+        private val binding: RecyclerviewMyHolderBinding,
+        private val itemClickListener: (item: ContentModel) -> Unit
+    ) :
+        RecyclerView.ViewHolder(binding.root) {
+
+
+        fun bind(item: ContentModel) {
+            binding.apply {
+
+                myHolderTvTitle.text = item.title
+                myHolderTvDateTime.text = Util.makeDateTimeFormat(item.dateTime)
+                myHolder.setOnClickListener {
+                    itemClickListener(item)
+                }
+            }
+            Glide.with(itemView.context)
+                .load(item.thumbnail)
+                .into(binding.myHolderIvTitle)
+
+        }
+    }
+
+
+}

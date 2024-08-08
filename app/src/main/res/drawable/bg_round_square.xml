@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
-    <corners android:radius="20dp"/>
-    <solid android:color="@color/black"/>
+    <stroke android:dashWidth="20dp"
+        android:dashGap="30dp"
+        android:width="30dp"
+        android:color="@color/ash"/>
+    <solid android:color="@color/light_ash"/>
 </shape>

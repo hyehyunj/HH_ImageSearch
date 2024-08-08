@@ -13,8 +13,8 @@
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_margin="4dp"
-        android:background="@drawable/bg_round_square"
-        android:clipToOutline="true"
+        android:background="@drawable/img_film"
+        android:padding="30dp"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toTopOf="@+id/my_holder_tv_title"
         app:layout_constraintEnd_toEndOf="parent"
@@ -24,25 +24,24 @@
 
     <TextView
         android:id="@+id/my_holder_tv_title"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:ellipsize="end"
-        android:maxLines="2"
+        android:maxLines="1"
         android:text="제목"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/my_holder_iv_title"
         app:layout_constraintStart_toStartOf="@+id/my_holder_iv_title"
         app:layout_constraintTop_toBottomOf="@+id/my_holder_iv_title" />
 
     <TextView
-        android:id="@+id/my_holder_tv_location"
+        android:id="@+id/my_holder_tv_date_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:text="날짜"
-        android:textSize="14sp"
+        android:textSize="10sp"
         app:layout_constraintEnd_toEndOf="@+id/my_holder_iv_title"
         app:layout_constraintStart_toStartOf="@+id/my_holder_iv_title"
         app:layout_constraintTop_toBottomOf="@+id/my_holder_tv_title" />

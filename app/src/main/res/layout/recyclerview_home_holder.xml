@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/home_holder"
+    android:layout_marginTop="12dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".activity.presentation.home.HomeFragment">
@@ -10,11 +11,11 @@
 
     <ImageView
         android:id="@+id/home_holder_iv_title"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_margin="4dp"
-        android:background="@drawable/bg_round_square"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:background="@drawable/img_film"
         android:clipToOutline="true"
+        android:padding="36dp"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toTopOf="@+id/home_holder_tv_title"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,24 +23,39 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
+        android:id="@+id/home_holder_iv_video"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="46dp"
+        android:background="@drawable/ic_video"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    <ImageView
         android:id="@+id/home_holder_iv_selected"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_margin="4dp"
-        android:background="@drawable/ic_ticket_light"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/ic_my_content"
         android:scaleType="centerCrop"
         android:visibility="invisible"
-       app:layout_constraintEnd_toEndOf="@+id/home_holder_iv_title"
-        app:layout_constraintTop_toTopOf="@+id/home_holder_iv_title" />
+        app:layout_constraintTop_toTopOf="@+id/home_holder_iv_title"
+       app:layout_constraintEnd_toEndOf="@+id/home_holder_iv_title"/>
 
     <TextView
         android:id="@+id/home_holder_tv_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:ellipsize="end"
-        android:maxLines="2"
+        android:gravity="center"
+        android:maxLines="1"
         android:text="제목"
+        android:textColor="@color/ash"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/home_holder_iv_title"
@@ -47,14 +63,15 @@
         app:layout_constraintTop_toBottomOf="@+id/home_holder_iv_title" />
 
     <TextView
-        android:id="@+id/home_holder_tv_location"
+        android:id="@+id/home_holder_tv_date_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:gravity="center"
         android:text="날짜"
-        android:textSize="14sp"
+        android:textColor="@color/ash"
+        android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="@+id/home_holder_iv_title"
-        app:layout_constraintStart_toStartOf="@+id/home_holder_tv_title"
+        app:layout_constraintStart_toStartOf="@+id/home_holder_iv_title"
         app:layout_constraintTop_toBottomOf="@+id/home_holder_tv_title" />
 
 

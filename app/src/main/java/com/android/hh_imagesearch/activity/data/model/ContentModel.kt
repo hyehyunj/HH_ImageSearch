@@ -2,22 +2,22 @@ package com.android.hh_imagesearch.activity.data.model
 
 import java.util.UUID
 
-data class SearchModel(
+data class ContentModel(
     val uId: String = UUID.randomUUID().toString(),
     val selectedContent: Boolean = false,
     val contentsType: Int = 0,
     val thumbnail: String = "",
-    val siteName: String = "",
+    val title: String = "",
     val dateTime: String = "",
     val type : String
 )
 
 //이미지 결과를 SearchModel타입으로 변환시켜주는 함수
-fun imageToSearchModel(content: MutableList<ImageDocuments>): List<SearchModel> = with(content) {
+fun imageToContentModel(content: MutableList<ImageDocuments>): List<ContentModel> = with(content) {
     return map { content ->
-        SearchModel(
+        ContentModel(
             thumbnail = content.thumbnailUrl,
-            siteName = content.displaySiteName,
+            title = content.displaySiteName,
             dateTime = content.datetime,
             type = "image"
         )
@@ -25,8 +25,8 @@ fun imageToSearchModel(content: MutableList<ImageDocuments>): List<SearchModel> 
 }
 
 //동영상 결과를 변환시켜주는 함수
-fun videoToSearchModel(content : MutableList<VideoDocuments>) : List<SearchModel> = with(content) {
+fun videoToContentModel(content : MutableList<VideoDocuments>) : List<ContentModel> = with(content) {
     return map {content ->
-        SearchModel(thumbnail = content.thumbnail, dateTime = content.dateTime, type = "video")
+        ContentModel(thumbnail = content.thumbnail, title = content.title, dateTime = content.dateTime, type = "video")
     }
 }

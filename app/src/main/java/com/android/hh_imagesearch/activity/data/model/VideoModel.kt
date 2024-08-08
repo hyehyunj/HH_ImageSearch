@@ -20,7 +20,8 @@ data class VideoMeta(
 )
 
 data class VideoDocuments(
-//    val collection: String,
+    @SerializedName("title")
+    val title: String,
     @SerializedName("url")
     val url: String,
 //    val image_url: String,

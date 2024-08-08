@@ -15,26 +15,31 @@
         app:layout_constraintBottom_toTopOf="@+id/main_tab"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:id="@+id/main_frame"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:layout_constraintBottom_toTopOf="@+id/main_tab"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"/>
-
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toTopOf="@+id/main_tab"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/main_tab"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:background="@color/ash"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:tabIndicatorColor="@color/light_ash"
+        app:tabIndicatorFullWidth="true"
+        app:tabIndicatorHeight="60dp"
+        app:tabSelectedTextColor="@color/point_red"
+        app:tabTextColor="@color/light_ash" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

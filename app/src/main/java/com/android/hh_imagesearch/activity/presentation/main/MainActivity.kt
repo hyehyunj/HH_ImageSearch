@@ -3,16 +3,16 @@ package com.android.hh_imagesearch.activity.presentation.main
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.android.hh_imagesearch.activity.data.model.SearchModel
+import com.android.hh_imagesearch.activity.data.model.ContentModel
 import com.android.hh_imagesearch.databinding.ActivityMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), SelectedInterface {
 
     private lateinit var binding: ActivityMainBinding
-    private var addData = mutableListOf<SearchModel>()
+    private var addData = mutableListOf<ContentModel>()
     private lateinit var mainViewModel : MainViewModel
     companion object {
         private const val TAG = "MainActivity"
@@ -32,15 +32,16 @@ class MainActivity : AppCompatActivity() {
 
         //최근검색어 백업
         loadSearchWord()
-        mainViewModel.backUpImage(loadMyImage())
+        mainViewModel.backUpContent(loadMyImage())
 
         //최근검색어 저장
         mainViewModel.searchWordLiveData.observe(this) {
             saveSearchWord(it.toString())
         }
 
-        mainViewModel.imagesLiveData.observe(this) {
-           saveMyImage(it)
+        mainViewModel.selectedLiveData.observe(this) {
+            if(mainViewModel.selectedLiveData.value != null)
+            saveMyImage(it)
         }
 
 
@@ -79,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    private fun saveMyImage(image: List<SearchModel>) {
+    private fun saveMyImage(image: List<ContentModel>) {
         val pref = getSharedPreferences("pref", 0)
         val edit = pref.edit()
         val jsonString = Gson().toJson(image)
@@ -87,18 +88,20 @@ class MainActivity : AppCompatActivity() {
         edit.apply()
     }
 
-    private fun loadMyImage() : MutableList<SearchModel> {
+    private fun loadMyImage() : MutableList<ContentModel> {
         val pref = getSharedPreferences("pref", 0)
         val jsonString = pref.getString("search_image", "")
         return if (jsonString != "") {
-            val type = object : TypeToken<MutableList<SearchModel>>() {}.type
+            val type = object : TypeToken<MutableList<ContentModel>>() {}.type
             Gson().fromJson(jsonString, type)
         } else {
             mutableListOf()
         }
     }
 
-
+    override fun select(item: ContentModel) {
+        mainViewModel.addContent(item)
+    }
 
 
 }
