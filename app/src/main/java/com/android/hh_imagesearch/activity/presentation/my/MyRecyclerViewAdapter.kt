@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide
 
 class MyRecyclerViewAdapter(
     private val itemClickListener: (item: ContentModel) -> Unit,
-    private val itemLongClickListener: (item: ContentModel, position: Int) -> Unit
+    private val itemLongClickListener: (item: ContentModel) -> Unit
 ) : ListAdapter<ContentModel, MyRecyclerViewAdapter.Holder>(diffUtil) {
     companion object {
         val diffUtil = object : DiffUtil.ItemCallback<ContentModel>() {
@@ -41,7 +41,7 @@ class MyRecyclerViewAdapter(
     class Holder(
         private val binding: RecyclerviewMyHolderBinding,
         private val itemClickListener: (item: ContentModel) -> Unit,
-        private val itemLongClickListener: (item: ContentModel, position: Int) -> Unit
+        private val itemLongClickListener: (item: ContentModel) -> Unit
     ) :
         RecyclerView.ViewHolder(binding.root) {
 
@@ -55,7 +55,7 @@ class MyRecyclerViewAdapter(
                     itemClickListener(item)
                 }
                 myHolder.setOnLongClickListener {
-                    itemLongClickListener(item, adapterPosition)
+                    itemLongClickListener(item)
                     true
                 }
             }

@@ -14,10 +14,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var addData = mutableListOf<ContentModel>()
     private lateinit var mainViewModel : MainViewModel
+
     companion object {
         private const val TAG = "MainActivity"
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,12 +39,11 @@ class MainActivity : AppCompatActivity() {
             saveSearchWord(it.toString())
         }
 
+        //마이컨텐츠 저장
         mainViewModel.myContentLiveData.observe(this) {
             if(mainViewModel.myContentLiveData.value != null)
             saveMyContent(it)
         }
-
-
     }
 
     //레이아웃 초기화 함수 : 뷰페이저, 탭레이아웃 연결
@@ -58,12 +57,12 @@ class MainActivity : AppCompatActivity() {
                 0 -> tab.text = "검색"
                 1 -> {
                     tab.text = "보관함"
-                    mainViewModel.backUpContent(loadMyContent())
                 }
             }
         }.attach()
     }
 
+    //검색어 저장하는 함수
     private fun saveSearchWord(searchWord: String) {
         val pref = getSharedPreferences("pref", 0)
         val edit = pref.edit()
@@ -71,16 +70,13 @@ class MainActivity : AppCompatActivity() {
         edit.apply()
     }
 
+    //검색어 불러오는 함수
     private fun loadSearchWord() {
         val pref = getSharedPreferences("pref", 0)
         mainViewModel.updateSearchWord(pref.getString("search_word", "") ?: "")
     }
 
-
-
-
-
-
+    //컨텐츠 저장하는 함수
     private fun saveMyContent(content: List<ContentModel>) {
         val pref = getSharedPreferences("pref", 0)
         val edit = pref.edit()
@@ -89,6 +85,7 @@ class MainActivity : AppCompatActivity() {
         edit.apply()
     }
 
+    //컨텐츠 불러오는 함수
     private fun loadMyContent() : MutableList<ContentModel> {
         val pref = getSharedPreferences("pref", 0)
         val jsonString = pref.getString("search_image", "")

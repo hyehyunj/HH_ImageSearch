@@ -17,6 +17,37 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/my_tv_cinema"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:text="컨텐츠 클릭 : 삭제 \n우측하단 아이콘 : 전체삭제\n컨텐츠 길게 클릭 : 확대\n\n즐거운 관람 되세요!"
+        android:textColor="@color/light_ash"
+        app:layout_constraintTop_toTopOf="@+id/my_iv_cinema"
+        app:layout_constraintEnd_toEndOf="@+id/my_iv_cinema"
+        app:layout_constraintStart_toStartOf="@+id/my_iv_cinema"/>
+
+    <View
+        android:id="@+id/my_divider1"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/ash"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_iv_cinema"/>
+    <View
+        android:id="@+id/my_divider2"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/ash"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_divider1"/>
+
     <ImageView
         android:id="@+id/my_iv_delete"
         android:layout_width="30dp"
@@ -24,8 +55,8 @@
         android:layout_margin="16dp"
         android:clickable="true"
         android:src="@drawable/sel_my_iv_delete"
-        app:layout_constraintEnd_toEndOf="@+id/my_iv_cinema"
-        app:layout_constraintTop_toBottomOf="@+id/my_iv_cinema" />
+        app:layout_constraintEnd_toEndOf="@+id/my_divider2"
+        app:layout_constraintTop_toBottomOf="@+id/my_divider2" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/my_recycler_view"

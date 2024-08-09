@@ -23,6 +23,7 @@ import com.android.hh_imagesearch.activity.data.model.videoToContentModel
 import com.android.hh_imagesearch.activity.presentation.main.MainViewModel
 import com.android.hh_imagesearch.activity.network.NetWorkClient.apiService
 import com.android.hh_imagesearch.databinding.FragmentHomeBinding
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -39,6 +40,7 @@ class HomeFragment : Fragment() {
     private val sharedViewModel: MainViewModel by activityViewModels()
     private lateinit var homeRecyclerViewAdapter: HomeRecyclerViewAdapter
     private lateinit var searchWord: String
+    private val coroutineExceptionHandler = CoroutineExceptionHandler {_, throwable -> println("Caught: ${throwable.message}") }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -89,10 +91,12 @@ class HomeFragment : Fragment() {
 
         //필터 옵저버 : 검색 필터 변화를 감지해 반영
         sharedViewModel.searchFilterLiveData.observe(viewLifecycleOwner) {
+            if (searchWord != "") {
             when (sharedViewModel.searchFilterLiveData.value) {
                 "전체" -> receiveAll(searchWord)
                 "사진" -> receiveImage(searchWord)
                 "영상" -> receiveVideo(searchWord)
+            }
             }
         }
 
@@ -206,14 +210,15 @@ class HomeFragment : Fragment() {
     }
 
     //전체 검색결과 함수 : Retrofit을 통해 검색어에 따른 사진 및 영상 검색결과를 불러오는 함수
-    private fun receiveAll(query: String) = lifecycleScope.launch() {
+    private fun receiveAll(query: String) = lifecycleScope.launch {
+        if(query != "") {
         val receiveImage = async(Dispatchers.IO) { apiService.searchImage(query) }
-        val receiveVideo = async(Dispatchers.IO) { apiService.searchVideo(query) }
+            val receiveVideo = async(Dispatchers.IO) { apiService.searchVideo(query) }
 
-        sharedViewModel.receivedMergedSearchResult(
-            imageToContentModel(receiveImage.await().imageDocuments).toMutableList(),
-            videoToContentModel(receiveVideo.await().videoDocuments).toMutableList()
-        )
+            sharedViewModel.receivedMergedSearchResult(
+                imageToContentModel(receiveImage.await().imageDocuments).toMutableList(),
+                videoToContentModel(receiveVideo.await().videoDocuments).toMutableList()
+            )}
     }
 
     //사진 검색결과 함수 : Retrofit을 통해 검색어에 따른 이미지 검색결과를 불러오는 함수

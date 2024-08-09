@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -61,8 +63,8 @@ class MyFragment : Fragment() {
         myRecyclerViewAdapter = MyRecyclerViewAdapter(itemClickListener = { item ->
             removeMyContent(item)
         },
-            itemLongClickListener = { item, position ->
-                makeMovie(item, position)
+            itemLongClickListener = { item ->
+                makeMovie(item)
             })
         binding.myRecyclerView.adapter = myRecyclerViewAdapter
         binding.myRecyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
@@ -95,18 +97,17 @@ class MyFragment : Fragment() {
             .setPositiveButton("취소") { dialog, which ->
             }
             .show()
-
     }
 
-
-    //영화관으로  함수 : 다이얼로그로 삭제여부를 확인하고 클릭된 컨텐츠를 보관함에서 삭제해주는 함수
-    private fun makeMovie(content: ContentModel, position: Int) {
-        sharedViewModel.myContentLiveData.value?.get(position)
-
+    //크게보기 함수 : 컨텐츠 롱클릭시 최상단에서 확대
+    private fun makeMovie(content: ContentModel) {
+        binding.myTvCinema.isVisible = false
+        val scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.ainm_my_cinema)
+        binding.myIvCinema.apply {
+            startAnimation(scaleOut)
+        }
         Glide.with(requireContext())
             .load(content.thumbnail)
             .into(binding.myIvCinema)
     }
-
-
 }

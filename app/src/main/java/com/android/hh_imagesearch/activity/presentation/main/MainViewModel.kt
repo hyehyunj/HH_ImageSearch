@@ -13,6 +13,7 @@ class MainViewModel : ViewModel() {
     val searchResultLiveData: LiveData<MutableList<ContentModel>?> = _searchResultLiveData
 
     //검색어
+
     private val _searchWordLiveData = MutableLiveData<String>()
     val searchWordLiveData: LiveData<String> = _searchWordLiveData
 

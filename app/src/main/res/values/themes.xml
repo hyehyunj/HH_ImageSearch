@@ -1,15 +1,9 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.HH_ImageSearch" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-<!--        <item name="colorPrimary">@color/primary</item>-->
-<!--        <item name="colorAccent">@color/green</item>-->
         <item name="android:colorBackground">@color/light_ash</item>
+        <item name="colorAccent">@color/point_red</item>
         <item name="android:colorPrimary">@color/ash</item>
-        <item name="android:color">@color/ash</item>
-
     </style>
-
     <style name="Theme.HH_ImageSearch" parent="Base.Theme.HH_ImageSearch" />
 </resources>
